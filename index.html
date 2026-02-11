@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📋 Laporan Kondisi Kempu</title>
+
+<style>
+:root{
+  --primary:#00ff88;
+  --secondary:#00ccff;
+  --accent:#ff6b6b;
+  --bg:#0a0a0f;
+  --card:#1a1a25;
+  --border:#2a2a35;
+  --text:#ffffff;
+  --text-secondary:#a0a0c0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Segoe UI','Roboto',Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding:20px;
+  min-height:100vh;
+}
+.container{
+  max-width:1000px;
+  margin:auto;
+  background:var(--card);
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
+  border:1px solid var(--border);
+}
+h1{
+  text-align:center;
+  color:var(--primary);
+  margin-bottom:30px;
+  font-size:28px;
+  font-weight:700;
+}
+.form-group{
+  margin-bottom:20px;
+}
+label{
+  font-weight:600;
+  display:block;
+  margin-bottom:8px;
+  color:var(--text);
+  font-size:14px;
+}
+input,select,button{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+  transition:all 0.3s ease;
+}
+input:focus,select:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 10px rgba(0,255,136,0.2);
+}
+.kempu-card{
+  margin-top:25px;
+  padding:20px;
+  background:linear-gradient(145deg,#151520,#1a1a25);
+  border-left:4px solid var(--primary);
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+.code-display{
+  background:rgba(0,255,136,0.1);
+  border:1px solid var(--primary);
+  border-radius:8px;
+  padding:12px;
+  margin:15px 0;
+  text-align:center;
+  font-weight:700;
+  font-size:18px;
+  letter-spacing:2px;
+  color:var(--primary);
+}
+.code-input{
+  background:rgba(255,107,107,0.1);
+  border:2px solid var(--accent);
+}
+.code-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 15px rgba(255,107,107,0.3);
+}
+.photo-group{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:15px;
+  margin-top:15px;
+}
+.photo-section{
+  margin-top:20px;
+  padding:15px;
+  background:rgba(30,30,45,0.5);
+  border-radius:10px;
+  border:1px solid var(--border);
+}
+.section-title{
+  font-size:16px;
+  font-weight:600;
+  margin-bottom:10px;
+  color:var(--secondary);
+}
+.photo-preview{
+  width:100%;
+  height:100px;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--bg);
+}
+.photo-label{
+  font-size:11px;
+  color:var(--text-secondary);
+  text-align:center;
+  margin-top:5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.actions{
+  display:flex;
+  gap:15px;
+  margin-top:30px;
+  flex-wrap:wrap;
+}
+button{
+  background:var(--primary);
+  color:var(--bg);
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.3s ease;
+  padding:14px;
+  border-radius:10px;
+}
+button:hover{
+  background:var(--secondary);
+  transform:translateY(-2px);
+  box-shadow:0 5px 20px rgba(0,204,255,0.3);
+}
+button.secondary{
+  background:var(--border);
+  color:var(--text);
+}
+button.secondary:hover{
+  background:#3a3a45;
+}
+button.after-btn{
+  background:var(--accent);
+  color:var(--bg);
+}
+button.after-btn:hover{
+  background:#ff5252;
+  box-shadow:0 5px 20px rgba(255,107,107,0.3);
+}
+#loading{
+  text-align:center;
+  margin-top:25px;
+  font-weight:bold;
+  color:var(--primary);
+  display:none;
+  font-size:16px;
+}
+.success-message{
+  text-align:center;
+  margin-top:20px;
+  color:var(--primary);
+  font-size:16px;
+  display:none;
+}
+.error-message{
+  text-align:center;
+  margin-top:20px;
+  color:#ff4444;
+  font-size:16px;
+  display:none;
+}
+.timestamp{
+  font-size:12px;
+  color:var(--text-secondary);
+  margin-top:5px;
+  text-align:center;
+}
+.after-section{
+  display:none;
+  animation:fadeIn 0.5s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.status-badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+  margin-top:10px;
+}
+.status-open{
+  background:rgba(255,107,107,0.2);
+  color:#ff6b6b;
+  border:1px solid #ff6b6b;
+}
+.status-close{
+  background:rgba(0,255,136,0.2);
+  color:var(--primary);
+  border:1px solid var(--primary);
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>📋 Laporan Kondisi Kempu</h1>
+
+<div class="timestamp" id="timestamp"></div>
+
+<div class="form-group">
+<label>Nama Penginput</label>
+<input id="nama" placeholder="Masukkan nama Anda" required oninput="generateCodePreview()">
+</div>
+
+<div class="form-group">
+<label>Tanggal Produksi</label>
+<input type="date" id="tanggal" required>
+</div>
+
+<div class="form-group">
+<label>Varian</label>
+<input id="varian" placeholder="Masukkan varian produk" required>
+</div>
+
+<div class="form-group">
+<label>Grup</label>
+<select id="grup" required>
+<option value="">Pilih Grup</option>
+<option>A</option><option>B</option><option>C</option><option>D</option>
+</select>
+</div>
+
+<div id="kempuList"></div>
+
+<div class="actions">
+<button onclick="addKempu()" class="secondary">➕ Tambah Kempu</button>
+<button onclick="submitData()">📤 Kirim Laporan (Before)</button>
+<button onclick="openAfterModal()" class="after-btn">📸 Input Foto After</button>
+</div>
+
+<div id="loading">⏳ Mengirim data...</div>
+<div id="successMessage" class="success-message">✅ Laporan berhasil dikirim!</div>
+<div id="errorMessage" class="error-message">❌ Terjadi kesalahan saat mengirim data</div>
+</div>
+
+<!-- AFTER MODAL -->
+<div id="afterModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:var(--card);padding:25px;border-radius:16px;max-width:500px;width:90%;border:1px solid var(--border);max-height:90vh;overflow-y:auto">
+    <h3 style="color:var(--accent);margin-bottom:20px;text-align:center">📸 Input Foto After</h3>
+    
+    <div class="form-group">
+      <label>Kode Unik Kempu</label>
+      <input id="kodeUnikInput" placeholder="Masukkan kode unik (contoh: JON1A)" class="code-input" oninput="checkKodeUnik()">
+    </div>
+    
+    <div id="afterForm" style="display:none">
+      <div class="photo-section">
+        <div class="section-title">📸 Foto After (5 Foto)</div>
+        <div class="photo-group">
+          ${[1,2,3,4,5].map(i => `
+          <div>
+            <button type="button" onclick="openCameraAfter($,{i})" style="width:100%;padding:8px;font-size:12px">
+              Foto After ${i}${getAfterLabel(i)}
+            </button>
+            <img id="img_after_modal_${i}" class="photo-preview">
+            <div class="photo-label">${getAfterLabel(i).replace('(','').replace(')','')}</div>
+          </div>`).join("")}
+        </div>
+      </div>
+      
+      <div class="actions" style="margin-top:20px">
+        <button onclick="submitAfterData()" style="flex:1">📤 Kirim Foto After</button>
+        <button onclick="closeAfterModal()" class="secondary" style="flex:1">❌ Batal</button>
+      </div>
+    </div>
+    
+    <div style="margin-top:20px;text-align:center">
+      <button onclick="closeAfterModal()" class="secondary">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- CAMERA MODAL -->
+<div id="cameraModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999;align-items:center;justify-content:center">
+  <div style="background:var(--card);padding:20px;border-radius:16px;max-width:450px;width:90%;border:1px solid var(--border)">
+    <h3 style="color:var(--primary);margin-bottom:15px;text-align:center" id="cameraTitle">📷 Kamera</h3>
+    <video id="video" autoplay playsinline style="width:100%;border-radius:12px;border:1px solid var(--border);background:var(--bg)"></video>
+    <canvas id="canvas" style="display:none"></canvas>
+    <div style="display:flex;gap:12px;margin-top:15px">
+      <button onclick="takePhoto()" style="flex:1">📸 Ambil Foto</button>
+      <button onclick="closeCamera()" class="secondary" style="flex:1">❌ Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Set timestamp otomatis
+const now = new Date();
+document.getElementById('timestamp').textContent = `Timestamp: ${now.toLocaleString('id-ID')}`;
+document.getElementById('tanggal').value = now.toISOString().split('T')[0];
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyhYyO0MUTtH6TYJWUbSF6WzBt8OiThmNGj87uOV4yBHNs_kOULD-BulfRBREogeqiM6A/exec"; // Ganti dengan URL Web App Anda
+
+let kempuIndex = 0;
+let camKempu = null, camFoto = null, camType = null, camStream = null;
+let afterKodeUnik = null;
+let kodeCounter = 1; // Counter untuk angka dalam kode unik
+
+// Generate preview kode unik
+function generateCodePreview(){
+  const nama = document.getElementById('nama').value;
+  if(nama){
+    const initial = nama.charAt(0).toUpperCase();
+    const angka = kodeCounter;
+    const huruf = String.fromCharCode(65 + ((kempuIndex) % 26)); // A-Z
+    const kodePreview = `${initial}${angka}${huruf}`;
+    console.log("Preview Kode:", kodePreview);
+  }
+}
+
+function addKempu(){
+  kempuIndex++;
+  const nama = document.getElementById('nama').value;
+  
+  // Generate kode unik otomatis
+  let kodeUnik = '';
+  if(nama){
+    const initial = nama.charAt(0).toUpperCase();
+    const angka = kodeCounter++;
+    const huruf = String.fromCharCode(65 + ((kempuIndex - 1) % 26)); // A-Z
+    kodeUnik = `${initial}${angka}${huruf}`;
+  } else {
+    kodeUnik = `K${kempuIndex}A`;
+  }
+  
+  const div = document.createElement("div");
+  div.className = "kempu-card";
+  div.dataset.kode = kodeUnik;
+  div.innerHTML = `
+    <h3 style="color:var(--primary);margin-bottom:15px">Kempu #${kempuIndex}</h3>
+    
+    <div class="form-group">
+      <label>Nomor Kempu</label>
+      <input id="nomor_${kempuIndex}" placeholder="Masukkan nomor kempu" required>
+    </div>
+    
+    <div class="code-display">
+      🔑 Kode Unik: ${kodeUnik}
+    </div>
+    
+    <div class="status-badge status-open">
+      🟡 Status: Open (Menunggu Foto After)
+    </div>
+    
+    <!-- Foto Before -->
+    <div class="photo-section">
+      <div class="section-title">📸 Foto Before (4 Foto)</div>
+      <div class="photo-group">
+        ${[1,2,3,4].map(i => `
+        <div>
+          <button type="button" onclick="openCamera(${kempuIndex},${i},'before')" style="width:100%;padding:8px;font-size:12px">
+            Foto Before ${i}${i===4?' (Timbangan Zero)':''}
+          </button>
+          <img id="img_before_${kempuIndex}_${i}" class="photo-preview">
+          <div class="photo-label">${i===4?'Timbangan Zero':'Foto '+i}</div>
+        </div>`).join("")}
+      </div>
+    </div>
+    
+    <!-- Foto After (hidden sampai kode unik dimasukkan) -->
+    <div class="after-section" id="after_section_${kempuIndex}">
+      <div class="photo-section">
+        <div class="section-title">📸 Foto After (5 Foto)</div>
+        <div class="photo-group">
+          ${[1,2,3,4,5].map(i => `
+          <div>
+            <button type="button" onclick="openCamera(${kempuIndex},${i},'after')" style="width:100%;padding:8px;font-size:12px">
+              Foto After ${i}${getAfterLabel(i)}
+            </button>
+            <img id="img_after_${kempuIndex}_${i}" class="photo-preview">
+            <div class="photo-label">${getAfterLabel(i).replace('(','').replace(')','')}</div>
+          </div>`).join("")}
+        </div>
+      </div>
+      
+      <div class="status-badge status-close">
+        🟢 Status: Close (Foto After Lengkap)
+      </div>
+    </div>
+  `;
+  kempuList.appendChild(div);
+}
+
+function getAfterLabel(index){
+  const labels = {
+    1: ' (Tutup)',
+    2: ' (Kabel Ties)',
+    3: ' (Kabel Ties Tutup Atas)',
+    4: ' (Nomor Kempu)',
+    5: ' (Hasil Timbangan)'
+  };
+  return labels[index] || '';
+}
+
+async function openCamera(k,f,type){
+  camKempu = k;
+  camFoto = f;
+  camType = type;
+  cameraModal.style.display = "flex";
+  
+  document.getElementById('cameraTitle').textContent = `📷 Kamera - ${type === 'before' ? 'Foto Before' : 'Foto After'} ${f}`;
+  
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+    video.srcObject = camStream;
+  } catch (error) {
+    alert("Gagal mengakses kamera: " + error.message);
+    closeCamera();
+  }
+}
+
+function takePhoto(){
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video, 0, 0);
+  
+  const imageData = canvas.toDataURL("image/jpeg", 0.8);
+  
+  if(camType === 'after' && !camKempu){ // From modal
+    document.getElementById(`img_after_modal_${camFoto}`).src = imageData;
+  } else {
+    document.getElementById(`img_${camType}_${camKempu}_${camFoto}`).src = imageData;
+  }
+  
+  closeCamera();
+}
+
+function closeCamera(){
+  cameraModal.style.display = "none";
+  if(camStream){
+    camStream.getTracks().forEach(t => t.stop());
+    camStream = null;
+  }
+}
+
+// AFTER MODAL FUNCTIONS
+function openAfterModal(){
+  if(kempuIndex === 0){
+    alert("Belum ada data kempu! Silakan input foto before terlebih dahulu.");
+    return;
+  }
+  afterModal.style.display = "flex";
+  document.getElementById('kodeUnikInput').value = '';
+  document.getElementById('afterForm').style.display = 'none';
+  // Clear previous photos
+  for(let i=1; i<=5; i++){
+    document.getElementById(`img_after_modal_${i}`).src = '';
+  }
+}
+
+function closeAfterModal(){
+  afterModal.style.display = "none";
+}
+
+function checkKodeUnik(){
+  const kodeInput = document.getElementById('kodeUnikInput').value.toUpperCase().trim();
+  
+  if(kodeInput.length < 3){
+    return;
+  }
+  
+  // Cari kempu dengan kode unik yang cocok
+  const kempuCards = document.querySelectorAll('.kempu-card');
+  let found = false;
+  
+  kempuCards.forEach(card => {
+    const kodeCard = card.dataset.kode;
+    if(kodeCard === kodeInput){
+      found = true;
+      afterKodeUnik = kodeInput;
+      
+      // Tampilkan form after
+      document.getElementById('afterForm').style.display = 'block';
+      
+      // Auto-fill jika sudah ada foto after sebelumnya
+      for(let i=1; i<=5; i++){
+        const existingImg = document.querySelector(`#img_after_${cardIndexFromKode(kodeInput)}_${i}`);
+        if(existingImg && existingImg.src){
+          document.getElementById(`img_after_modal_${i}`).src = existingImg.src;
+        }
+      }
+    }
+  });
+  
+  if(!found && kodeInput.length >= 3){
+    document.getElementById('afterForm').style.display = 'none';
+    alert("Kode unik tidak ditemukan! Pastikan kode sudah benar.");
+  }
+}
+
+function cardIndexFromKode(kode){
+  const cards = document.querySelectorAll('.kempu-card');
+  for(let i=0; i<cards.length; i++){
+    if(cards[i].dataset.kode === kode){
+      return i+1;
+    }
+  }
+  return null;
+}
+
+async function submitAfterData(){
+  if(!afterKodeUnik){
+    alert("Kode unik tidak valid!");
+    return;
+  }
+  
+  const cardIndex = cardIndexFromKode(afterKodeUnik);
+  if(!cardIndex){
+    alert("Kode unik tidak ditemukan!");
+    return;
+  }
+  
+  // Validasi minimal 1 foto after
+  let hasPhoto = false;
+  for(let i=1; i<=5; i++){
+    if(document.getElementById(`img_after_modal_${i}`).src){
+      hasPhoto = true;
+      break;
+    }
+  }
+  
+  if(!hasPhoto){
+    alert("Minimal 1 foto after harus diambil!");
+    return;
+  }
+  
+  // Copy foto dari modal ke card
+  for(let i=1; i<=5; i++){
+    const src = document.getElementById(`img_after_modal_${i}`).src;
+    if(src){
+      document.getElementById(`img_after_${cardIndex}_${i}`).src = src;
+    }
+  }
+  
+  // Tampilkan section after dan update status
+  document.getElementById(`after_section_${cardIndex}`).style.display = 'block';
+  
+  // Update status badge
+  const badges = document.querySelectorAll(`#after_section_${cardIndex} .status-badge`);
+  if(badges.length > 0){
+    const card = document.querySelector(`.kempu-card:nth-child(${cardIndex})`);
+    const openBadge = card.querySelector('.status-open');
+    if(openBadge) openBadge.remove();
+  }
+  
+  alert("✅ Foto after berhasil disimpan!");
+  closeAfterModal();
+  
+  // Kirim data after ke server
+  await sendAfterData(afterKodeUnik, cardIndex);
+}
+
+async function sendAfterData(kodeUnik, cardIndex){
+  loading.style.display = "block";
+  
+  const payload = {
+    action: "update_after",
+    kode_unik: kodeUnik,
+    timestamp_close: new Date().toISOString(),
+    after: [1,2,3,4,5].map(i => document.getElementById(`img_after_${cardIndex}_${i}`).src)
+  };
+  
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    if(!response.ok){
+      throw new Error("Gagal mengirim data after");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    loading.style.display = "none";
+  }
+}
+
+async function submitData(){
+  // Validasi input
+  const nama = document.getElementById('nama').value;
+  const tanggal = document.getElementById('tanggal').value;
+  const varian = document.getElementById('varian').value;
+  const grup = document.getElementById('grup').value;
+  
+  if(!nama || !tanggal || !varian || !grup){
+    alert("Semua field wajib diisi!");
+    return;
+  }
+  
+  if(kempuIndex === 0){
+    alert("Minimal harus ada 1 data kempu!");
+    return;
+  }
+  
+  loading.style.display = "block";
+  successMessage.style.display = "none";
+  errorMessage.style.display = "none";
+  
+  const payload = {
+    action: "submit_before",
+    timestamp: new Date().toISOString(),
+    nama: nama,
+    tanggal: tanggal,
+    varian: varian,
+    grup: grup,
+    kempu: []
+  };
+  
+  for(let i = 1; i <= kempuIndex; i++){
+    const nomor = document.getElementById(`nomor_${i}`).value;
+    const kodeUnik = document.querySelector(`.kempu-card:nth-child(${i})`).dataset.kode;
+    
+    if(!nomor){
+      alert(`Nomor kempu pada Kempu #${i} wajib diisi!`);
+      loading.style.display = "none";
+      return;
+    }
+    
+    // Validasi foto before (minimal 1 foto harus ada)
+    let hasBeforePhoto = false;
+    for(let j = 1; j <= 4; j++){
+      if(document.getElementById(`img_before_${i}_${j}`).src){
+        hasBeforePhoto = true;
+        break;
+      }
+    }
+    
+    if(!hasBeforePhoto){
+      alert(`Kempu #${i}: Minimal 1 foto before harus diambil!`);
+      loading.style.display = "none";
+      return;
+    }
+    
+    payload.kempu.push({
+      nomor: nomor,
+      kode_unik: kodeUnik,
+      before: [1,2,3,4].map(j => document.getElementById(`img_before_${i}_${j}`).src),
+      status: "open"
+    });
+  }
+  
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    if(response.ok){
+      successMessage.style.display = "block";
+      setTimeout(() => {
+        location.reload();
+      }, 2000);
+    } else {
+      throw new Error("Gagal mengirim data ke server");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    errorMessage.style.display = "block";
+    errorMessage.textContent = `❌ ${error.message}`;
+  } finally {
+    loading.style.display = "none";
+  }
+}
+
+// Tambahkan kempu pertama saat halaman dimuat
+addKempu();
+</script>
+</body>
+</html>
