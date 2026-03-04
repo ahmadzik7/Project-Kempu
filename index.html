@@ -859,17 +859,44 @@ async function submitAfterData() {
 // ==================== SERVER COMMUNICATION ====================
 
 // Helper: Cek apakah image data valid
+// ✅ FIXED FUNCTION - Copy ini
 function isValidImageData(src) {
-  return src && src.startsWith('image') && src.length > 1000;
+  if (!src) {
+    console.log('❌ isValidImageData: src is null/undefined');
+    return false;
+  }
+  
+  const startsWithData = src.startsWith('data:image');
+  const isLongEnough = src.length > 1000;
+  
+  console.log(`🔍 isValidImageData:`, {
+    hasSrc: true,
+    startsWithData,
+    length: src.length,
+    isLongEnough,
+    valid: startsWithData && isLongEnough
+  });
+  
+  return startsWithData && isLongEnough;
 }
 
-// Helper: Ekstrak array foto dari card
+// ✅ FIXED FUNCTION - Copy ini
 function getPhotoArray(cardIndex, type, count) {
   const photos = [];
+  console.log(`📥 getPhotoArray: card=${cardIndex}, type=${type}, count=${count}`);
+  
   for (let i = 1; i <= count; i++) {
     const img = document.getElementById(`img_${type}_${cardIndex}_${i}`);
-    photos.push(isValidImageData(img?.src) ? img.src : null);
+    const src = img?.src;
+    const valid = isValidImageData(src);
+    
+    console.log(`  Foto ${i}: valid=${valid}, length=${src?.length || 0}`);
+    photos.push(valid ? src : null);
   }
+  
+  const validCount = photos.filter(p => p !== null).length;
+  console.log(`✅ getPhotoArray result: ${validCount}/${count} valid photos`);
+  
   return photos;
 }
 
@@ -1125,4 +1152,5 @@ window.updateCodePreview = updateCodePreview;
 </script>
 </body>
 </html>
+
 
